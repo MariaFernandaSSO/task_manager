@@ -65,7 +65,10 @@ public class TaskService {
     public void delete(String id, User user) {
         Task task = taskRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa com id: " + id + " não encontrada"));
-        taskRepository.delete(task);
+
+        task.setDeleted(true);
+
+        taskRepository.save(task);
     }
 }
 

@@ -47,6 +47,8 @@ public class Task {
     @Column(nullable = false)
     private TaskPriority priority;
 
+    private boolean isDeleted;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

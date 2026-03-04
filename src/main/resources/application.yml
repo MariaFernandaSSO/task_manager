@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
   jpa:
@@ -24,6 +26,13 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:e28361eb-4e21-4632-bc37-9937b7c5c56d}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
 
 server:
   port: ${SERVER_PORT:8080}

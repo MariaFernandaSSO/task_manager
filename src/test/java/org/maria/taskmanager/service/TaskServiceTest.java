@@ -169,13 +169,14 @@ class TaskServiceTest {
     }
 
     @Test
-    @DisplayName("deve deletar tarefa com sucesso")
+    @DisplayName("deve aplicar soft delete com sucesso")
     void delete_success() {
         given(taskRepository.findByIdAndUserId("uuid-123", 1L)).willReturn(Optional.of(task));
 
         taskService.delete("uuid-123", user);
 
-        verify(taskRepository).delete(task);
+        assertThat(task.isDeleted()).isTrue();
+        verify(taskRepository).save(task);
     }
 
     @Test
@@ -187,4 +188,3 @@ class TaskServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }
-

@@ -22,7 +22,8 @@ spring:
   output:
     ansi:
       enabled: never
-
+  jackson:
+    default-property-inclusion: non_null
 app:
   jwt:
     secret: ${JWT_SECRET:e28361eb-4e21-4632-bc37-9937b7c5c56d}

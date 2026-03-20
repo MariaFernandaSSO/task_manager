@@ -32,8 +32,7 @@ public class AuthService {
         User user = userMapper.toUser(request);
         userRepository.save(user);
 
-        String token = jwtUtil.generateToken(user);
-        return authMapper.toAuthResponse(token, user);
+        return authMapper.toAuthResponse(null, user);
     }
 
     public ResponseAuthDto login(PostLoginRequestDto request) {
@@ -49,4 +48,3 @@ public class AuthService {
         return authMapper.toAuthResponse(token, user);
     }
 }
-

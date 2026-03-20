@@ -1,5 +1,6 @@
 package org.maria.taskmanager.service;
 
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,11 +20,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -32,11 +33,16 @@ import static org.mockito.Mockito.verify;
 @DisplayName("AuthService")
 class AuthServiceTest {
 
-    @Mock private AuthenticationManager authenticationManager;
-    @Mock private UserRepository userRepository;
-    @Mock private UserMapper userMapper;
-    @Mock private AuthMapper authMapper;
-    @Mock private JwtUtil jwtUtil;
+    @Mock
+    private AuthenticationManager authenticationManager;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private UserMapper userMapper;
+    @Mock
+    private AuthMapper authMapper;
+    @Mock
+    private JwtUtil jwtUtil;
 
     @InjectMocks
     private AuthService authService;
@@ -69,16 +75,16 @@ class AuthServiceTest {
     void register_success() {
         given(userRepository.existsByEmail(registerRequest.getEmail())).willReturn(false);
         given(userMapper.toUser(registerRequest)).willReturn(user);
-        given(jwtUtil.generateToken(user)).willReturn("jwt_token");
-        given(authMapper.toAuthResponse("jwt_token", user))
-                .willReturn(new ResponseAuthDto("jwt_token", "Bearer", "maria@email.com", "Maria"));
+        given(authMapper.toAuthResponse(nullable(String.class), eq(user)))
+                .willReturn(new ResponseAuthDto(null, "maria@email.com", "Maria"));
 
         ResponseAuthDto response = authService.register(registerRequest);
 
         assertThat(response).isNotNull();
-        assertThat(response.getToken()).isEqualTo("jwt_token");
+        assertThat(response.getToken()).isNull();
         assertThat(response.getEmail()).isEqualTo("maria@email.com");
         verify(userRepository).save(user);
+        verify(jwtUtil, never()).generateToken(any());
     }
 
     @Test
@@ -98,8 +104,8 @@ class AuthServiceTest {
     void login_success() {
         given(userRepository.findByEmail(loginRequest.getEmail())).willReturn(Optional.of(user));
         given(jwtUtil.generateToken(user)).willReturn("jwt_token");
-        given(authMapper.toAuthResponse("jwt_token", user))
-                .willReturn(new ResponseAuthDto("jwt_token", "Bearer", "maria@email.com", "Maria"));
+        given(authMapper.toAuthResponse(nullable(String.class), eq(user)))
+                .willReturn(new ResponseAuthDto("jwt_token", "maria@email.com", "Maria"));
 
         ResponseAuthDto response = authService.login(loginRequest);
 
@@ -118,4 +124,3 @@ class AuthServiceTest {
                 .hasMessageContaining("Usuário não encontrado");
     }
 }
-

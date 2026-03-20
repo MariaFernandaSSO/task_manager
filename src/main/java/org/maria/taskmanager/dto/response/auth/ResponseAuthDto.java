@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseAuthDto {
-
     private String token;
-    private String type = "Bearer";
     private String email;
     private String name;
 }
